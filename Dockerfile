@@ -1,4 +1,6 @@
 FROM node:18
+# For GHCR
+LABEL org.opencontainers.image.source="https://github.com/idjohnson/expressUploader"
 
 WORKDIR /usr/src/app
 
