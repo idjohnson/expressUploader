@@ -31,4 +31,4 @@ jobs:
         run: |
           helm package ./helm/
           export HELM_EXPERIMENTAL_OCI=1
-          helm push expressupload-0.1.0.tgz oci://ghcr.io/${{github.actor}}/
+          helm push expressupload-*.tgz oci://ghcr.io/${{github.actor}}/
