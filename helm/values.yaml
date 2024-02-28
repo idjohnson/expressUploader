@@ -1,0 +1,13 @@
+replicaCount: 1
+image:
+  repository: idjohnson/expressuploader
+  tag: latest
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
+pvc:
+  accessModes:
+    - ReadWriteOnce
+  storage: 5Gi
+  storageClassName: "local-path"

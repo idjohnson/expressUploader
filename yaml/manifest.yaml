@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: expressuploader-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: expressuploader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: expressuploader
+  template:
+    metadata:
+      labels:
+        app: expressuploader
+    spec:
+      containers:
+      - name: expressuploader
+        image: idjohnson/expressuploader:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DESTINATION_PATH
+          value: "/mnt/storage"
+        volumeMounts:
+        - name: expressuploader-storage
+          mountPath: /mnt/storage
+      volumes:
+      - name: expressuploader-storage
+        persistentVolumeClaim:
+          claimName: expressuploader-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: expressuploader-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 3000
+  selector:
+    app: expressuploader
+

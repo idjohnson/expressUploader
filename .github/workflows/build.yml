@@ -26,3 +26,9 @@ jobs:
         run: |
           docker build . --tag ghcr.io/${{github.actor}}/expressupload:latest
           docker push ghcr.io/${{github.actor}}/expressupload:latest
+
+      - name: 'Helm package and push'
+        run: |
+          helm package ./helm/
+          export HELM_EXPERIMENTAL_OCI=1
+          helm push expressupload-0.1.0.tgz oci://ghcr.io/${{github.actor}}/
