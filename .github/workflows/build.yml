@@ -28,6 +28,30 @@ jobs:
           docker build . --tag ghcr.io/${{github.actor}}/expressupload:latest
           docker push ghcr.io/${{github.actor}}/expressupload:latest
 
+      - name: 'Build and Push Image'
+        run: |
+          docker build . --tag ghcr.io/${{github.actor}}/expressupload:latest
+          docker push ghcr.io/${{github.actor}}/expressupload:latest
+
+      - name: 'Set Image SHA0'
+        run: |
+          CONTAINERSHA=`docker images --no-trunc --quiet ghcr.io/${{github.actor}}/expressupload:latest`
+          echo "CONTAINERSHA=$CONTAINERSHA" >> $GITHUB_OUTPUT
+        id: consha0
+
+      - name: 'Set Image SHA'
+        run: |
+          CONTAINERSHA=$(docker inspect -f '{{.Id}}' ghcr.io/${{github.actor}}/expressupload:latest)
+          echo "CONTAINERSHA=$CONTAINERSHA" >> $GITHUB_OUTPUT
+        id: consha1
+
+      - name: Generate artifact attestation
+        uses: actions/attest-build-provenance@v1
+        with:
+          subject-name: ghcr.io/${{github.actor}}/expressupload:latest
+          subject-digest: ${{ steps.consha1.outputs.CONTAINERSHA }}
+          push-to-registry: true
+
       - name: 'Helm package and push'
         run: |
           helm package ./helm/
@@ -63,3 +87,26 @@ jobs:
           gh attestation verify ./expressupload-0.1.0.tgz -R idjohnson/expressUploader
 
 
+
+
+[Chorus]
+We love the dee are (dee are)
+We love the gee cee pea (gee cee pea)
+We love the dee are (dee are)
+We love the gee cee pea (gee cee pea)
+
+[Verse]
+I loved the Dee Eff Eh, hey
+Enamored with the Fusion, Cold
+I loved the vee Sphere
+But it's so dam old
+The windows was so nice
+The java and big eye peas!
+But please no Big Fix, ice!
+Hobbled at the knees
+
+[Bridge]
+Let's kill the dee eff eh (dee eff eh)
+Let's end this Peak ten (Peak ten)
+Let's stop the Docker (Containers oh my)
+Migrate for the win (for the win!)
