@@ -39,3 +39,25 @@ jobs:
         with:
            subject-path: "expressupload-0.1.0.tgz"
 
+  validate:
+    runs-on: ubuntu-latest
+    dependsOn: build
+    steps:
+      - name: 'Fetch Chart'
+        run: |
+          export HELM_EXPERIMENTAL_OCI=1
+          helm pull expressupload-*.tgz oci://ghcr.io/${{github.actor}}/expressupload --version 0.1.0
+
+      - name: 'Validate'
+        run: |
+          set -x
+          ls -l
+          gh attestation verify ./expressupload-0.1.0.tgz -o idjohnson
+
+      - name: 'Validate2'
+        run: |
+          set -x
+          ls -l
+          gh attestation verify ./expressupload-0.1.0.tgz -R idjohnson/expressUploader
+
+
