@@ -41,7 +41,7 @@ jobs:
 
   validate:
     runs-on: ubuntu-latest
-    dependsOn: build
+    needs: build
     steps:
       - name: 'Fetch Chart'
         run: |
