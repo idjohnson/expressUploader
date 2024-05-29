@@ -28,18 +28,14 @@ jobs:
           docker build . --tag ghcr.io/${{github.actor}}/expressupload:latest
           docker push ghcr.io/${{github.actor}}/expressupload:latest
 
-      - name: 'Save as a TGZ'
-        run: |
-          docker save ghcr.io/${{github.actor}}/expressupload:latest | gzip > expressupload.tar.gz
-
-      - name: Attest Build Provenance
-        uses: actions/attest-build-provenance@897ed5eab6ed058a474202017ada7f40bfa52940 # v1.0.0
-        with:
-           subject-path: "expressupload.tar.gz"
-
-
       - name: 'Helm package and push'
         run: |
           helm package ./helm/
           export HELM_EXPERIMENTAL_OCI=1
           helm push expressupload-*.tgz oci://ghcr.io/${{github.actor}}/
+
+      - name: Attest Build Provenance
+        uses: actions/attest-build-provenance@897ed5eab6ed058a474202017ada7f40bfa52940 # v1.0.0
+        with:
+           subject-path: "expressupload-0.1.0.tgz"
+
