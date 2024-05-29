@@ -32,6 +32,9 @@ jobs:
         run: |
           docker build . --tag ghcr.io/${{github.actor}}/expressupload:latest
           docker push ghcr.io/${{github.actor}}/expressupload:latest
+          echo "======================= TESTS ======================="
+          docker images --no-trunc --quiet ghcr.io/${{github.actor}}/expressupload:latest
+          docker inspect -f '{{.Id}}' ghcr.io/${{github.actor}}/expressupload:latest
 
       - name: 'Set Image SHA0'
         run: |
@@ -49,7 +52,7 @@ jobs:
         uses: actions/attest-build-provenance@v1
         with:
           subject-name: ghcr.io/${{github.actor}}/expressupload
-          subject-digest: ${{ steps.consha1.outputs.CONTAINERSHA }}
+          subject-digest: ${{ steps.consha0.outputs.CONTAINERSHA }}
           push-to-registry: true
 
       - name: 'Helm package and push'
