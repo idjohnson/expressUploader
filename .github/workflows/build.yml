@@ -46,7 +46,7 @@ jobs:
       - name: 'Fetch Chart'
         run: |
           export HELM_EXPERIMENTAL_OCI=1
-          helm pull expressupload-*.tgz oci://ghcr.io/${{github.actor}}/expressupload --version 0.1.0
+          helm pull oci://ghcr.io/${{github.actor}}/expressupload --version 0.1.0
 
       - name: 'Validate'
         run: |
