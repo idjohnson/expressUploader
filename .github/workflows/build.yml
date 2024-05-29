@@ -48,7 +48,7 @@ jobs:
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
         with:
-          subject-name: ghcr.io/${{github.actor}}/expressupload:latest
+          subject-name: ghcr.io/${{github.actor}}/expressupload
           subject-digest: ${{ steps.consha1.outputs.CONTAINERSHA }}
           push-to-registry: true
 
