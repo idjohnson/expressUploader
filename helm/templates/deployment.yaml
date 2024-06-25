@@ -21,6 +21,8 @@ spec:
         env:
         - name: DESTINATION_PATH
           value: "/mnt/storage"
+        - name: ZIPKIN_ENDPOINT
+          value: {{ .Values.zipkinEndpoint }}
         volumeMounts:
         - name: expressuploader-storage
           mountPath: /mnt/storage

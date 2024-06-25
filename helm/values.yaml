@@ -6,6 +6,7 @@ image:
 service:
   type: ClusterIP
   port: 80
+zipkinEndpoint: http://localhost:9411
 pvc:
   accessModes:
     - ReadWriteOnce
