@@ -5,19 +5,16 @@ const path = require('path');
 const fs = require('fs');
 // Added for Zipkin Traces
 const { Tracer, ExplicitContext, BatchRecorder, jsonEncoder } = require('zipkin');
+const CLSContext = require('zipkin-context-cls');
 const { HttpLogger } = require('zipkin-transport-http');
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-
+const zipkinMiddleware = require("zipkin-instrumentation-express").expressMiddleware;
 
 // Create a Zipkin tracer
 const zipkinBaseUrl = process.env.ZIPKIN_ENDPOINT || 'http://localhost:9411'; // Replace with your Zipkin server address
 const recorder = new BatchRecorder({
   logger: new HttpLogger({
     endpoint: `${zipkinBaseUrl}/api/v2/spans`,
-    jsonEncoder
-: jsonEncoder.JSON_V2,
+    jsonEncoder: jsonEncoder.JSON_V2,
   }),
 });
 const tracer = new Tracer({
@@ -26,20 +23,10 @@ const tracer = new Tracer({
   localServiceName: 'express-uploader', // Name of your service
 });
 
-// Middleware to create a Zipkin span for each request
-app.use((req, res, next) => {
-  const traceId = tracer.createRootId();
-  const span = tracer.startSpan('request', { childOf: traceId });
-  span.setTag('http.method', req.method);
-  span.setTag('http.path', req.path);
-  res.on('finish', () => {
-    span.setTag('http.status_code', res.statusCode);
-    span.finish();
-  });
-  // Store the span in the request context for later use
-  req.zipkinSpan = span;
-  next();
-});
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(zipkinMiddleware({ tracer }));
 
 // Set up multer to handle file uploads
 const upload = multer({ dest: process.env.DESTINATION_PATH || '/tmp' });
