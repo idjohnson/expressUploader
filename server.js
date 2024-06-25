@@ -7,9 +7,6 @@ const fs = require('fs');
 const { Tracer, ExplicitContext, BatchRecorder, jsonEncoder } = require('zipkin');
 const { HttpLogger } = require('zipkin-transport-http');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
 
 // Create a Zipkin tracer
 const zipkinBaseUrl = process.env.ZIPKIN_ENDPOINT || 'http://localhost:9411'; // Replace with your Zipkin server address
@@ -25,6 +22,9 @@ const tracer = new Tracer({
   recorder: recorder,
   localServiceName: 'express-uploader', // Name of your service
 });
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Middleware to create a Zipkin span for each request
 app.use((req, res, next) => {
@@ -46,16 +46,12 @@ const upload = multer({ dest: process.env.DESTINATION_PATH || '/tmp' });
 
 // Serve the HTML form
 app.get('/', (req, res) => {
-  const span = tracer.startSpan('handle_root', { childOf: req.zipkinSpan });
-  span.finish();
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/simple.min.css', (req, res) => {
-    const span = tracer.startSpan('handle_root', { childOf: req.zipkinSpan });
-    span.finish();
     res.sendFile(path.join(__dirname, 'simple.min.css'));
-  });
+});
 
 // Handle file upload
 app.post('/upload', upload.single('file'), (req, res) => {
@@ -63,15 +59,12 @@ app.post('/upload', upload.single('file'), (req, res) => {
   const originalFileName = req.file.originalname;
   const destinationFilePath = path.join(process.env.DESTINATION_PATH || '/tmp', originalFileName);
 
-  const span = tracer.startSpan('handle_root', { childOf: req.zipkinSpan });
   fs.rename(tempFilePath, destinationFilePath, (err) => {
     if (err) {
       console.error('Error moving file:', err);
-      span.finish();
       res.status(500).send('Error moving file');
     } else {
       console.log('File saved successfully:', destinationFilePath);
-      span.finish();
       res.status(200).send('File uploaded successfully');
     }
   });
