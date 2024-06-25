@@ -3,6 +3,7 @@ image:
   repository: idjohnson/expressuploader
   tag: latest
   pullPolicy: IfNotPresent
+  # pullSecret: secret with credentials for private registry
 service:
   type: ClusterIP
   port: 80
