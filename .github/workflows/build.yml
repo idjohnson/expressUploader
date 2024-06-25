@@ -23,12 +23,12 @@ jobs:
           username: ${{github.actor}}
           password: ${{secrets.GITHUB_TOKEN}}
 
-      - name: 'Build and Push Image'
+      - name: 'Build and Push Image: SHA'
         run: |
           docker build . --tag ghcr.io/${{github.actor}}/expressupload:${{github.sha}}
           docker push ghcr.io/${{github.actor}}/expressupload:${{github.sha}}
 
-      - name: 'Build and Push Image'
+      - name: 'Build and Push Image: Latest'
         run: |
           docker build . --tag ghcr.io/${{github.actor}}/expressupload:latest
           docker push ghcr.io/${{github.actor}}/expressupload:latest
