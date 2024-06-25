@@ -63,7 +63,7 @@ jobs:
       - name: Attest Build Provenance
         uses: actions/attest-build-provenance@897ed5eab6ed058a474202017ada7f40bfa52940 # v1.0.0
         with:
-           subject-path: "expressupload-0.1.0.tgz"
+           subject-path: "expressupload-0.1.1.tgz"
 
   validate:
     runs-on: ubuntu-latest
@@ -74,18 +74,18 @@ jobs:
       - name: 'Fetch Chart'
         run: |
           export HELM_EXPERIMENTAL_OCI=1
-          helm pull oci://ghcr.io/${{github.actor}}/expressupload --version 0.1.0
+          helm pull oci://ghcr.io/${{github.actor}}/expressupload --version 0.1.1
 
       - name: 'Validate'
         run: |
           set -x
           ls -l
-          gh attestation verify ./expressupload-0.1.0.tgz -o idjohnson
+          gh attestation verify ./expressupload-0.1.1.tgz -o idjohnson
 
       - name: 'Validate2'
         run: |
           set -x
           ls -l
-          gh attestation verify ./expressupload-0.1.0.tgz -R idjohnson/expressUploader
+          gh attestation verify ./expressupload-0.1.1.tgz -R idjohnson/expressUploader
 
 
