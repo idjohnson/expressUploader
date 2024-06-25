@@ -16,10 +16,6 @@ spec:
       - name: expressuploader
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
-        {{ if .Values.image.pullSecret }}
-        imagePullSecrets:
-        - name: {{ .Values.image.pullSecret }}
-        {{ end }}
         ports:
         - containerPort: 3000
         env:
@@ -30,6 +26,10 @@ spec:
         volumeMounts:
         - name: expressuploader-storage
           mountPath: /mnt/storage
+      {{ if .Values.image.pullSecret }}
+      imagePullSecrets:
+      - name: {{ .Values.image.pullSecret }}
+      {{ end }}
       volumes:
       - name: expressuploader-storage
         persistentVolumeClaim:
